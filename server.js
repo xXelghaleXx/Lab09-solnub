@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const productsRoutes = require('./routes/products');
 require('dotenv').config();
+const path = require('path');
 
 
 app.set('view engine', 'ejs');
