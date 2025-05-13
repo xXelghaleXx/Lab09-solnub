@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: productos-app
+    runtime: node
+    repo: https://github.com/tu-usuario/tu-repo.git  # Reemplaza con tu URL real de GitHub
+    branch: main
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: AWS_ACCESS_KEY_ID
+        value: your-access-key-id
+      - key: AWS_SECRET_ACCESS_KEY
+        value: your-secret-access-key
+      - key: AWS_REGION
+        value: us-east-2
+      - key: S3_BUCKET_NAME
+        value: imgbucktadrian
+    autoDeploy: true
+

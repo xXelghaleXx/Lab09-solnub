@@ -1,0 +1,30 @@
+<% layout('layout') %>
+
+<a href="/productos/new" class="btn btn-primary mb-3">Agregar producto</a>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Imagen</th>
+      <th>Nombre</th>
+      <th>Descripción</th>
+      <th>Precio</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% productos.forEach(producto => { %>
+      <tr>
+        <td><img src="<%= producto.imagen_url %>" alt="" width="100"></td>
+        <td><%= producto.nombre %></td>
+        <td><%= producto.descripcion %></td>
+        <td>S/ <%= producto.precio %></td>
+        <td>
+          <form action="/productos/<%= producto.id %>/delete" method="POST">
+            <button class="btn btn-danger btn-sm">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
