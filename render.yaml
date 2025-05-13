@@ -2,7 +2,7 @@ services:
   - type: web
     name: productos-app
     runtime: node
-    repo: https://github.com/tu-usuario/tu-repo.git  # Reemplaza con tu URL real de GitHub
+    repo: https://github.com/xXelghaleXx/Lab09-solnub.git
     branch: main
     buildCommand: npm install
     startCommand: node server.js
