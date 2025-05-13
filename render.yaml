@@ -4,18 +4,16 @@ services:
     runtime: node
     repo: https://github.com/xXelghaleXx/Lab09-solnub.git
     branch: main
-    buildCommand: npm install
+    buildCommand: npm rebuild sqlite3 && npm install
     startCommand: node server.js
     envVars:
-      - key: NODE_ENV
-        value: production
       - key: AWS_ACCESS_KEY_ID
-        value: your-access-key-id
+        value: tu-key
       - key: AWS_SECRET_ACCESS_KEY
-        value: your-secret-access-key
+        value: tu-secret
       - key: AWS_REGION
         value: us-east-2
       - key: S3_BUCKET_NAME
         value: imgbucktadrian
-    autoDeploy: true
-
+      - key: NODE_ENV
+        value: production
