@@ -4,7 +4,7 @@ services:
     runtime: node
     repo: https://github.com/xXelghaleXx/Lab09-solnub.git
     branch: main
-    buildCommand: npm rebuild sqlite3 && npm install && npm install ejs
+    buildCommand: npm install express ejs express-ejs-layouts sqlite3 multer aws-sdk dotenv
     startCommand: node server.js
     envVars:
       - key: AWS_ACCESS_KEY_ID
