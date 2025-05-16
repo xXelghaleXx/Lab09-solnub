@@ -31,7 +31,7 @@ router.post('/productos', upload.single('imagen'), async (req, res) => {
   }
 
   try {
-    const s3Result = await uploadFileToS3(file); // file.buffer incluido
+    const s3Result = await uploadFileToS3(file);
     const imageUrl = s3Result.Location;
 
     db.run(
@@ -48,6 +48,60 @@ router.post('/productos', upload.single('imagen'), async (req, res) => {
   }
 });
 
+// Formulario para editar producto
+router.get('/productos/:id/edit', (req, res) => {
+  const id = req.params.id;
+  db.get('SELECT * FROM productos WHERE id = ?', [id], (err, producto) => {
+    if (err || !producto) return res.redirect('/');
+    res.render('edit', { producto });
+  });
+});
+
+// Actualizar producto
+router.post('/productos/:id/edit', upload.single('imagen'), async (req, res) => {
+  const id = req.params.id;
+  const { nombre, descripcion, precio } = req.body;
+  const file = req.file;
+
+  try {
+    if (file) {
+      // Si se sube nueva imagen: subir nueva y eliminar antigua
+      const s3Result = await uploadFileToS3(file);
+      const newImageUrl = s3Result.Location;
+
+      // Eliminar la imagen anterior de S3
+      db.get('SELECT imagen_url FROM productos WHERE id = ?', [id], async (err, row) => {
+        if (row && row.imagen_url) {
+          const oldFile = row.imagen_url.split('/').pop();
+          await deleteFileFromS3(oldFile);
+        }
+      });
+
+      db.run(
+        `UPDATE productos SET nombre = ?, descripcion = ?, precio = ?, imagen_url = ? WHERE id = ?`,
+        [nombre, descripcion, precio, newImageUrl, id],
+        (err) => {
+          if (err) return res.status(500).send("Error al actualizar producto");
+          res.redirect('/');
+        }
+      );
+    } else {
+      // Si no se sube imagen nueva, mantener la anterior
+      db.run(
+        `UPDATE productos SET nombre = ?, descripcion = ?, precio = ? WHERE id = ?`,
+        [nombre, descripcion, precio, id],
+        (err) => {
+          if (err) return res.status(500).send("Error al actualizar producto");
+          res.redirect('/');
+        }
+      );
+    }
+  } catch (error) {
+    console.error("Error al actualizar producto:", error);
+    res.status(500).send("Error al actualizar producto");
+  }
+});
+
 // Eliminar producto
 router.post('/productos/:id/delete', (req, res) => {
   const id = req.params.id;
@@ -56,7 +110,7 @@ router.post('/productos/:id/delete', (req, res) => {
     if (err || !row) return res.redirect('/');
 
     const imageUrl = row.imagen_url;
-    const filename = imageUrl.split('/').pop(); // Extraer nombre de archivo de la URL
+    const filename = imageUrl.split('/').pop();
 
     try {
       await deleteFileFromS3(filename);
